@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Fee Report</title>
+  <style>
+   body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f6f8;
+  color: #333;
+}
+
+.container {
+  max-width: 500px;
+  margin: 40px auto;
+  background-color: #e0f7fa;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.container input,
+.container select,
+.container button {
+  display: block;
+  margin: 12px auto;
+  width: 90%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.container button {
+  background-color: #6200ea;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.container button:hover {
+  background-color: #4500b0;
+}
+
+h2 {
+  text-align: center;
+  margin-top: 30px;
+  color: #2e3b4e;
+}
+
+table {
+  width: 90%;
+  margin: 30px auto;
+  border-collapse: collapse;
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  background-color: #6a1b9a;
+  color: white;
+  font-weight: 600;
+}
+
+td button {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  background-color: #ff5252;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+td button:hover {
+  background-color: #c4001d;
+}
+
+#totalFeeDisplay {
+  text-align: center;
+  margin: 20px auto;
+  font-size: 22px;
+  font-weight: bold;
+  color: #00897b;
+}
+
+button[onclick="calculateTotalFee()"] {
+  background-color: #009688;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 8px;
+}
+
+button[onclick="calculateTotalFee()"]:hover {
+  background-color: #00695c;
+}
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Student Report Fee</h2>
+    <input type="text" id="student" placeholder="Student Name" />
+    <input type="text" id="father" placeholder="Father Name" />
+    <input type="text" id="mother" placeholder="Mother Name" />
+    <select id="sclass">
+      <option value="">Choose Class</option>
+      <option value="1st">1st</option>
+      <option value="2nd">2nd</option>
+      <option value="3rd">3rd</option>
+      <option value="4th">4th</option>
+      <option value="5th">5th</option>
+    </select>
+    <select id="subject">
+      <option value="">Choose Subject</option>
+      <option value="Math">Math</option>
+      <option value="English">English</option>
+      <option value="GS">GS</option>
+      <option value="Hindi">Hindi</option>
+    </select>
+    <select id="month">
+      <option value="">Choose Month</option>
+      <option value="June">June</option>
+      <option value="July">July</option>
+      <option value="March">March</option>
+    </select>
+    <input type="number" id="fee" placeholder="Fee" />
+    <button onclick="batoran()">Generate</button>
+  </div>
+
+  <h2>Generated Fee Report Total</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Roll</th>
+        <th>Name</th>
+        <th>Father</th>
+        <th>Mother</th>
+        <th>Class</th>
+        <th>Subject</th>
+        <th>Fee</th>
+        <th>Fee Add</th>
+        <th>Month</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="studentT"></tbody>
+  </table>
+
+  <div style="text-align: center; margin-top: 20px;">
+    <button onclick="calculateTotalFee()">Calculate Total Fee</button>
+    <div id="totalFeeDisplay">Total Fee: 0</div>
+  </div>
+
+  <script>
+    let count = 540;
+
+    function batoran() {
+      let student = document.getElementById('student').value;
+      let father = document.getElementById('father').value;
+      let mother = document.getElementById('mother').value;
+      let sclass = document.getElementById('sclass').value;
+      let subject = document.getElementById('subject').value;
+      let fee = document.getElementById('fee').value;
+      let month = document.getElementById('month').value;
+
+      let row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${count++}</td>
+        <td>${student}</td>
+        <td>${father}</td>
+        <td>${mother}</td>
+        <td>${sclass}</td>
+        <td>${subject}</td>
+        <td class="fee-cell">${fee}</td>
+        <td><button onclick="addFee(this)">Add Fee</button></td>
+        <td>${month}</td>
+        <td><button onclick="this.closest('tr').remove()">Delete</button></td>
+      `;
+      document.getElementById("studentT").appendChild(row);
+
+      // Save to localStorage
+      localStorage.setItem("sname", student);
+      localStorage.setItem("fname", father);
+      localStorage.setItem("mname", mother);
+      localStorage.setItem("ssclass", sclass);
+      localStorage.setItem("ssubject", subject);
+      localStorage.setItem("mmonth", month);
+      localStorage.setItem("ffee", fee);
+
+      // Reset fields
+      document.getElementById('student').value = '';
+      document.getElementById('father').value = '';
+      document.getElementById('mother').value = '';
+      document.getElementById('sclass').value = '';
+      document.getElementById('subject').value = '';
+      document.getElementById('fee').value = '';
+      document.getElementById('month').value = '';
+    }
+
+    function addFee(button) {
+      const row = button.closest('tr');
+      const feeCell = row.querySelector('.fee-cell');
+      const feeAmount = parseInt(feeCell.textContent.replace("₹", "")) || 0;
+      const newAmount = parseInt(prompt("Enter Fee Amount")) || 0;
+      const updateAmount = feeAmount + newAmount;
+      feeCell.textContent = `₹${updateAmount}`;
+    }
+
+    function calculateTotalFee() {
+      let total = 0;
+      const feeCells = document.querySelectorAll(".fee-cell");
+      feeCells.forEach(cell => {
+        const amount = parseInt(cell.textContent.replace("₹", "")) || 0;
+        total += amount;
+      });
+      document.getElementById("totalFeeDisplay").textContent = `Total Fee: ₹${total}`;
+    }
+
+    window.onload = function () {
+      const saveName = localStorage.getItem("sname");
+      const saveFather = localStorage.getItem("fname");
+      const saveMother = localStorage.getItem("mname");
+      const saveClass = localStorage.getItem("ssclass");
+      const saveSubject = localStorage.getItem("ssubject");
+      const saveMonth = localStorage.getItem("mmonth");
+      const saveFee = localStorage.getItem("ffee");
+
+      if (saveName && saveFather && saveMother && saveClass && saveSubject && saveMonth && saveFee) {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${count++}</td>
+          <td>${saveName}</td>
+          <td>${saveFather}</td>
+          <td>${saveMother}</td>
+          <td>${saveClass}</td>
+          <td>${saveSubject}</td>
+          <td class="fee-cell">${saveFee}</td>
+          <td><button onclick="addFee(this)">Add Fee</button></td>
+          <td>${saveMonth}</td>
+          <td><button onclick="this.closest('tr').remove()">Delete</button></td>
+        `;
+        document.getElementById("studentT").appendChild(row);
+      }
+    };
+  </script>
+</body>
+</html>
+ 
